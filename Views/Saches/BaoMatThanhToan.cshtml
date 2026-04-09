@@ -1,0 +1,62 @@
+@{
+    ViewData["Title"] = "Chính sách bảo mật thanh toán";
+}
+
+<div class="container mt-4 mb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent p-0 mb-3">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Trang chủ</a></li>
+            <li class="breadcrumb-item active text-danger fw-bold" aria-current="page">Chính sách bảo mật thanh toán</li>
+        </ol>
+    </nav>
+    
+    <h3 class="text-uppercase fw-bold mb-4" style="color: #C92127;">CHÍNH SÁCH BẢO MẬT THANH TOÁN</h3>
+    
+    <div class="card border-0 shadow-sm rounded-3 p-3 p-md-4">
+        <p>Hệ thống thanh toán thẻ trên website của chúng tôi được cung cấp bởi các đối tác Cổng thanh toán đã được cấp phép hoạt động hợp pháp tại Việt Nam. Do đó, các tiêu chuẩn bảo mật thanh toán thẻ của chúng tôi luôn đảm bảo tuân thủ theo các tiêu chuẩn bảo mật của Đối tác Cổng thanh toán.</p>
+
+        <hr class="my-4 text-muted">
+
+        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-shield-check text-success me-2"></i>1. CAM KẾT BẢO MẬT</h5>
+        <p>Chính sách giao dịch thanh toán bằng thẻ quốc tế và thẻ nội địa (internet banking) đảm bảo tuân thủ các tiêu chuẩn bảo mật của các Đối tác Cổng thanh toán gồm:</p>
+        <ul class="mb-4" style="line-height: 1.8;">
+            <li>Thông tin tài chính của khách hàng sẽ được bảo vệ trong suốt quá trình giao dịch bằng giao thức <strong>SSL (Secure Sockets Layer)</strong> 256-bit.</li>
+            <li>Chứng nhận tiêu chuẩn bảo mật dữ liệu thẻ thanh toán (<strong>PCI DSS</strong>) do Trustwave cung cấp.</li>
+            <li>Mật khẩu sử dụng một lần (<strong>OTP</strong>) được gửi qua SMS để đảm bảo việc truy cập tài khoản được xác thực.</li>
+            <li>Tiêu chuẩn mã hóa <strong>MD5</strong> 128 bit.</li>
+            <li>Các nguyên tắc và quy định bảo mật thông tin trong ngành tài chính ngân hàng theo quy định của Ngân hàng nhà nước Việt Nam.</li>
+        </ul>
+
+        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-file-earmark-lock text-primary me-2"></i>2. CHÍNH SÁCH BẢO MẬT GIAO DỊCH TRONG THANH TOÁN CỦA CHÚNG TÔI</h5>
+        <div class="list-group mb-4">
+            <div class="list-group-item border-start-0 border-end-0 border-top-0 py-3">
+                <i class="bi bi-check-circle-fill text-danger me-2"></i> 
+                <strong>Không lưu trữ thông tin thẻ:</strong> Chúng tôi chỉ lưu giữ chuỗi đã được mã hóa bởi Đối tác Cổng thanh toán cung cấp. Chúng tôi tuyệt đối <strong>không trực tiếp lưu trữ</strong> thông tin thẻ tín dụng/ghi nợ hay tài khoản ngân hàng của khách hàng.
+            </div>
+            <div class="list-group-item border-start-0 border-end-0 border-top-0 py-3">
+                <i class="bi bi-check-circle-fill text-danger me-2"></i> 
+                <strong>Xử lý dữ liệu qua Cổng thanh toán:</strong> Việc bảo mật các thông tin cá nhân và thông tin thẻ thanh toán của Khách hàng hoàn toàn do Đối tác Cổng thanh toán thực hiện.
+            </div>
+            <div class="list-group-item border-start-0 border-end-0 border-top-0 py-3">
+                <i class="bi bi-check-circle-fill text-danger me-2"></i> 
+                <strong>Kiểm soát truy cập:</strong> Đối với thẻ quốc tế: thông tin thẻ thanh toán của Khách hàng mà có khả năng sử dụng để xác lập giao dịch không được lưu trên hệ thống của chúng tôi. Đối tác Cổng thanh toán sẽ lưu trữ và bảo mật.
+            </div>
+            <div class="list-group-item border-0 py-3">
+                <i class="bi bi-check-circle-fill text-danger me-2"></i> 
+                <strong>Khắc phục sự cố:</strong> Đối với thẻ nội địa (internet banking), chúng tôi chỉ lưu trữ mã đơn hàng, mã giao dịch và tên Ngân hàng. Trong trường hợp xảy ra lỗi hoặc sự cố, chúng tôi sẽ phối hợp chặt chẽ với Ngân hàng và Cổng thanh toán để giải quyết nhanh chóng, bảo vệ quyền lợi cho Khách hàng.
+            </div>
+        </div>
+
+        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-person-fill-exclamation text-warning me-2"></i>3. TRÁCH NHIỆM CỦA KHÁCH HÀNG</h5>
+        <div class="alert alert-secondary border-0 mb-4" role="alert" style="line-height: 1.8;">
+            Để đảm bảo an toàn tối đa cho mọi giao dịch, chúng tôi khuyến cáo quý khách hàng:
+            <ul class="mb-0 mt-2">
+                <li>Tuyệt đối <strong>không chia sẻ</strong> thông tin thẻ, mã OTP, tên đăng nhập và mật khẩu cho bất kỳ ai.</li>
+                <li>Luôn <strong>đăng xuất</strong> khỏi tài khoản sau khi hoàn tất mua sắm, đặc biệt là khi sử dụng máy tính công cộng.</li>
+                <li>Thường xuyên cập nhật phần mềm diệt virus trên thiết bị cá nhân (điện thoại, máy tính) để tránh các rủi ro về phần mềm độc hại.</li>
+                <li>Nếu nghi ngờ tài khoản bị lộ hoặc có giao dịch bất thường, vui lòng liên hệ ngay với Hotline CSKH của chúng tôi và Ngân hàng phát hành thẻ để được hỗ trợ khóa thẻ kịp thời.</li>
+            </ul>
+        </div>
+
+    </div>
+</div>

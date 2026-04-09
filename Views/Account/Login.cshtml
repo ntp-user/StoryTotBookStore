@@ -1,0 +1,49 @@
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5">
+                    <h3 class="text-center mb-4 fw-bold" style="color: #C92127;">ĐĂNG NHẬP TÀI KHOẢN</h3>
+                    
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger text-center">
+                            @ViewBag.Error
+                        </div>
+                    }
+
+                    <form asp-controller="Account" asp-action="Login" method="post">
+                        @if (TempData["ThongBao"] != null)
+                        {
+                            <div class="alert alert-success mt-3 text-center">
+                                @TempData["ThongBao"]
+                            </div>
+                        }
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tên đăng nhập</label>
+                            <input type="text" name="username" class="form-control" required placeholder="Nhập tài khoản...">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Mật khẩu</label>
+                            <input type="password" name="password" class="form-control" required placeholder="Nhập mật khẩu...">
+                        </div>
+                        <button type="submit" class="btn w-100 text-white fw-bold py-2" style="background-color: #C92127; border-radius: 8px;">
+                            ĐĂNG NHẬP
+                        </button>
+                        <div class="text-center mt-3">
+                            <span>Bạn chưa có tài khoản? </span>
+                            <a asp-controller="Account" asp-action="Register" class="text-danger text-decoration-none fw-bold">Đăng ký ngay</a>
+                        </div>
+
+                        
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,90 @@
+@using BookStoreManagement.Data
+@using BookStoreManagement.Models
+@* 🔴 QUAN TRỌNG: Nếu DbContext của bạn tên khác (VD: ApplicationDbContext), hãy đổi chữ BookStoreContext bên dưới nhé *@
+@inject ApplicationDbContext _context
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+    // 1. TỰ ĐỘNG TÍNH HẠNG THÀNH VIÊN CHO MỌI TRANG
+    string hangThanhVien = "Thành viên Đồng";
+    string badgeBg = "#b87333"; // Màu nền Đồng mặc định
+    string textClass = "text-white";
+
+    string userName = User.Identity?.Name ?? "";
+    var user = _context.TaiKhoans.FirstOrDefault(t => t.Username == userName);
+
+    if (user != null)
+    {
+        // Tính tổng tiền các đơn hàng hợp lệ
+        // Đổi điều kiện từ d.TrangThai != 2 sang d.TrangThai == 1 || d.TrangThai == 3
+        var donHangs = _context.DonHangs
+            .Where(d => d.MaTK == user.MaTK && (d.TrangThai == 1 || d.TrangThai == 3))
+            .ToList();
+
+        decimal tongChiTieu = donHangs.Sum(d => (decimal)(d.TongTien ?? 0));
+
+        if (tongChiTieu >= 10000000) {
+            hangThanhVien = "Thành viên Kim Cương";
+            badgeBg = "#00bfff"; // Màu xanh dương
+            textClass = "text-dark";
+        } else if (tongChiTieu >= 5000000) {
+            hangThanhVien = "Thành viên Vàng";
+            badgeBg = "#ffd700"; // Màu vàng
+            textClass = "text-dark fw-bold";
+        } else if (tongChiTieu >= 2000000) {
+            hangThanhVien = "Thành viên Bạc";
+            badgeBg = "#c0c0c0"; // Màu bạc
+            textClass = "text-dark";
+        }
+    }
+}
+
+<div class="container my-4" style="background-color: #f8f9fa;">
+    <div class="row">
+        <div class="col-lg-3 col-md-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-body text-center pt-4">
+                    <div class="avatar-wrap mb-2">
+                        <img src="/images/user.png" alt="Avatar" class="rounded-circle img-thumbnail" style="width: 80px; height: 80px;">
+                    </div>
+                    
+                    @* 2. HIỂN THỊ HUY HIỆU ĐỘNG THEO KẾT QUẢ TÍNH TOÁN *@
+                    <span class="badge rounded-pill px-3 py-1 mb-3 @textClass" style="background-color: @badgeBg;">
+                        @hangThanhVien
+                    </span>
+                    
+                </div>
+                
+                <div class="list-group list-group-flush pb-3 account-sidebar">
+                    <a href="@Url.Action("HoSoCaNhan", "TaiKhoan")" class="list-group-item list-group-item-action border-0 py-2 @(currentAction == "HoSoCaNhan" ? "text-danger fw-bold border-start border-danger border-3" : "text-dark")">
+                        Hồ sơ cá nhân
+                    </a>
+                    <a href="@Url.Action("SoDiaChi", "TaiKhoan")" class="list-group-item list-group-item-action border-0 py-2 @(currentAction == "SoDiaChi" ? "text-danger fw-bold border-start border-danger border-3" : "text-dark")">
+                        Sổ địa chỉ
+                    </a>
+                    <a href="@Url.Action("DoiMatKhau", "TaiKhoan")" class="list-group-item list-group-item-action border-0 py-2 @(currentAction == "DoiMatKhau" ? "text-danger fw-bold border-start border-danger border-3" : "text-dark")">
+                        Đổi mật khẩu
+                    </a>
+                    <a href="@Url.Action("UuDaiThanhVien", "TaiKhoan")" class="list-group-item list-group-item-action border-0 py-2 @(currentAction == "UuDaiThanhVien" ? "text-danger fw-bold border-start border-danger border-3" : "text-dark")">
+                        Ưu đãi thành viên
+                    </a>
+                    <a href="@Url.Action("DonHangCuaToi", "TaiKhoan")" class="list-group-item list-group-item-action border-0 py-2 @(currentAction == "DonHangCuaToi" ? "text-danger fw-bold border-start border-danger border-3" : "text-dark")">
+                        Đơn hàng của tôi
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9 col-md-8">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-body p-4">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@await RenderSectionAsync("Scripts", required: false)

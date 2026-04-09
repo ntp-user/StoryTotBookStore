@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Thanh toán đơn hàng";
+    
+    // ĐIỀN THÔNG TIN TÀI KHOẢN THẬT CỦA BẠN VÀO ĐÂY:
+    string bankId = "MB"; // Tên viết tắt ngân hàng (MB, VCB, TCB, ACB, VPB,...)
+    string accountNo = "969692006"; // Số tài khoản của bạn
+    string accountName = "NGUYEN TIEN PHUC"; // Tên chủ tài khoản (Viết không dấu)
+    
+    // Nội dung chuyển khoản tự động
+    string noiDungCK = "Thanh toan don hang " + ViewBag.OrderId;
+    
+    // Link API tạo mã QR tự động từ VietQR
+    string qrUrl = $"https://img.vietqr.io/image/{bankId}-{accountNo}-compact2.png?amount={ViewBag.Amount}&addInfo={noiDungCK}&accountName={accountName}";
+}
+
+<div class="container mt-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Thanh toán chuyển khoản bằng mã QR</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Mở ứng dụng ngân hàng hoặc Momo/ZaloPay và quét mã bên dưới để thanh toán.</p>
+                    
+                    <img src="@qrUrl" alt="QR Thanh Toán" class="img-fluid border p-2 rounded mb-3" style="max-width: 300px;">
+                    
+                    <h4 class="text-danger fw-bold">@string.Format("{0:N0}", ViewBag.Amount) đ</h4>
+                    <p class="mb-1"><strong>Ngân hàng:</strong> @bankId</p>
+                    <p class="mb-1"><strong>Chủ tài khoản:</strong> @accountName</p>
+                    <p class="mb-1"><strong>Nội dung:</strong> <span class="text-primary">@noiDungCK</span></p>
+
+                    <hr />
+                    
+                    <div class="alert alert-warning" style="font-size: 0.9rem;">
+                        <i class="bi bi-info-circle"></i> Vui lòng giữ nguyên nội dung chuyển khoản để hệ thống duyệt đơn tự động.
+                    </div>
+
+                    <a href="/Saches/OrderSuccess" class="btn btn-success btn-lg mt-2 w-100">
+                        <i class="bi bi-check-circle"></i> Tôi đã thanh toán thành công
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

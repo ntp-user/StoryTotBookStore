@@ -1,0 +1,132 @@
+@model BookStoreManagement.Models.Sach
+@{
+    ViewData["Title"] = "Sửa thông tin sách";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml"; // Đảm bảo dùng chung Layout Admin
+}
+
+<style>
+    /* Tuỳ chỉnh màu sắc cho các ô nhập liệu trong nền tối */
+    .form-control-dark {
+        background-color: #2b3035;
+        border: 1px solid #495057;
+        color: #f8f9fa;
+    }
+    .form-control-dark:focus {
+        background-color: #343a40;
+        border-color: #0dcaf0;
+        color: #fff;
+        box-shadow: 0 0 0 0.25rem rgba(13, 202, 240, 0.25);
+    }
+    .form-control-dark::placeholder {
+        color: #6c757d;
+    }
+    
+    /* Tuỳ chỉnh Dropdown (Select) */
+    .form-select-dark {
+        background-color: #2b3035;
+        border: 1px solid #495057;
+        color: #f8f9fa;
+        /* Mãu mũi tên xổ xuống màu trắng */
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23f8f9fa' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    }
+    .form-select-dark:focus {
+        border-color: #0dcaf0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 202, 240, 0.25);
+    }
+</style>
+
+<div class="container-fluid mt-4 text-white">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-warning fw-bold m-0"><i class="bi bi-pencil-square"></i> CHỈNH SỬA SÁCH</h2>
+        <a asp-action="Index" class="btn btn-outline-light"><i class="bi bi-arrow-left"></i> Quay lại</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mb-4">
+            <div class="card bg-dark border-0 shadow rounded-4 p-4" style="border: 1px solid #343a40 !important;">
+                <h5 class="text-info mb-4 border-bottom border-secondary pb-2">Thông tin chi tiết</h5>
+                
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="MaSach" />
+                    <input type="hidden" asp-for="HinhAnhUrl" />
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label asp-for="TenSach" class="form-label fw-bold text-light">Tên Sách <span class="text-danger">*</span></label>
+                            <input asp-for="TenSach" class="form-control form-control-dark" required placeholder="Nhập tên sách..." />
+                            <span asp-validation-for="TenSach" class="text-danger small"></span>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="LoaiSach" class="form-label fw-bold text-light">Phân Loại</label>
+                            <select asp-for="LoaiSach" class="form-select form-select-dark">
+                                <option value="">-- Chọn loại --</option>
+                                <option value="Trong Nuoc">Sách Trong Nước</option>
+                                <option value="Nuoc Ngoai">Sách Nước Ngoài</option>
+                            </select>
+                            <span asp-validation-for="LoaiSach" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="TacGia" class="form-label fw-bold text-light">Tác giả</label>
+                            <input asp-for="TacGia" class="form-control form-control-dark" placeholder="Tên tác giả..." />
+                            <span asp-validation-for="TacGia" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="GiaBan" class="form-label fw-bold text-light">Giá Bán (VNĐ) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input asp-for="GiaBan" type="number" class="form-control form-control-dark" required />
+                                <span class="input-group-text bg-secondary text-white border-secondary">₫</span>
+                            </div>
+                            <span asp-validation-for="GiaBan" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="MoTa" class="form-label fw-bold text-light">Mô tả sách</label>
+                        <textarea asp-for="MoTa" class="form-control form-control-dark" rows="4" placeholder="Nhập mô tả chi tiết nội dung cuốn sách..."></textarea>
+                        <span asp-validation-for="MoTa" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4 p-3 rounded" style="background-color: rgba(255,193,7, 0.1); border: 1px dashed #ffc107;">
+                        <label class="form-label fw-bold text-warning mb-2"><i class="bi bi-cloud-upload"></i> Tải lên ảnh mới</label>
+                        <input type="file" name="fileTaiLen" class="form-control form-control-dark" accept="image/*" />
+                        <small class="text-light mt-1 d-block fst-italic">* Bỏ trống ô này nếu bạn muốn giữ nguyên hình ảnh hiện tại.</small>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 pt-3 border-top border-secondary">
+                        <a asp-action="Index" class="btn btn-secondary px-4">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-warning px-5 fw-bold shadow"><i class="bi bi-save"></i> Lưu Thay Đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark border-0 shadow rounded-4 p-4 h-100 text-center" style="border: 1px solid #343a40 !important;">
+                <h5 class="text-secondary mb-4 border-bottom border-secondary pb-2">Ảnh Hiện Tại</h5>
+                
+                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                    @if (!string.IsNullOrEmpty(Model.HinhAnhUrl))
+                    {
+                        <div class="position-relative">
+                            <img src="@Model.HinhAnhUrl" alt="@Model.TenSach" class="img-fluid rounded shadow-sm" style="max-height: 350px; object-fit: contain; border: 4px solid #fff;" />
+                        </div>
+                        <p class="text-white mt-3 small">@Model.TenSach</p>
+                    }
+                    else
+                    {
+                        <div class="p-5 border border-secondary border-dashed rounded text-muted w-100">
+                            <i class="bi bi-image fs-1 d-block mb-2"></i>
+                            <span class="fst-italic">Sách này chưa có hình ảnh</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

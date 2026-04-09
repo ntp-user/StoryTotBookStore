@@ -1,0 +1,125 @@
+@model BookStoreManagement.Models.Sach
+
+@{
+    ViewData["Title"] = Model.TenSach;
+}
+<style>
+    :root {
+    /* Ép Bootstrap đổi màu Danger (đỏ) thành màu của bạn */
+    --text-danger: #F8EBD4; /* Ví dụ: đổi sang màu tím */
+    @* --bs-danger-rgb: 142, 68, 173; /* Mã RGB tương ứng của màu trên */ *@
+}
+</style>
+<div class="container mt-4 bg-white p-4 rounded shadow-sm">
+    <div class="row">
+        
+            <div class="col-md-5 text-center">
+                @{
+                    // Xử lý tách chuỗi để lấy ảnh (chuẩn bị cho việc up nhiều ảnh lát nữa)
+                    string anhChinh = "https://placehold.co/400x500?text=No+Image";
+                    if (!string.IsNullOrEmpty(Model.HinhAnhUrl))
+                    {
+                        var mangAnh = Model.HinhAnhUrl.Split(',');
+                        anhChinh = "" + mangAnh[0].Trim();
+                    }
+                }
+                <img src="@anhChinh" class="img-fluid rounded" alt="@Model.TenSach" style="max-height: 400px; object-fit: contain;">
+                
+                <div class="d-flex justify-content-center mt-3 gap-2" id="khuVucAnhNho">
+            </div>
+        </div>
+
+        <div class="col-md-7 ps-md-4">
+            <h3 class="fw-bold">@Model.TenSach</h3>
+            
+            <div class="row mt-3 text-muted" style="font-size: 0.95rem;">
+                <div class="col-sm-6">
+                    <p class="mb-1">Nhà cung cấp: <a href="#" class="text-decoration-none fw-bold">Đang cập nhật</a></p>
+                    <p class="mb-1">Nhà xuất bản: <span class="fw-bold text-dark">Đang cập nhật</span></p>
+                </div>
+                <div class="col-sm-6">
+                    <p class="mb-1">Tác giả: <span class="fw-bold text-dark">@Model.TacGia</span></p>
+                    <p class="mb-1">Hình thức bìa: <span class="fw-bold text-dark">Bìa Mềm</span></p>
+                </div>
+            </div>
+
+            <div class="bg-light p-3 rounded mt-3 d-flex align-items-center gap-3">
+                <h2 class="text-danger fw-bold mb-0" style="font-size: 2rem;">@Model.GiaBan.ToString("N0") đ</h2>
+                <span class="text-decoration-line-through text-muted fs-5">@((Model.GiaBan * 1.2m).ToString("N0")) đ</span>
+                <span class="badge bg-danger fs-6">-20%</span>
+            </div>
+
+            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                <input type="hidden" name="id" value="@Model.MaSach" />
+
+                <div class="mt-4 d-flex align-items-center gap-3">
+                    <label class="fw-bold">Số lượng:</label>
+                    
+                    <div class="input-group" style="width: 130px;">
+                        <button class="btn btn-outline-secondary px-3" type="button" onclick="let q=document.getElementById('quantityInput'); if(q.value>1) q.value--;">-</button>
+                        
+                        <input type="text" id="quantityInput" name="soLuong" class="form-control text-center fw-bold" value="1" readonly>
+                        
+                        <button class="btn btn-outline-secondary px-3" type="button" onclick="document.getElementById('quantityInput').value++;">+</button>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-3">
+                    <button type="submit" class="btn btn-outline-danger btn-lg px-4 fw-bold d-flex align-items-center gap-2">
+                        <i class="bi bi-cart-plus fs-4"></i> Thêm vào giỏ hàng
+                    </button>
+                    
+                    <button type="submit" asp-action="MuaNgay" asp-controller="Saches" class="btn btn-danger btn-lg px-5 fw-bold w-100">
+                        Mua ngay
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="row mt-5 pt-4 border-top">
+        <div class="col-12">
+            <h5 class="fw-bold mb-3">Thông tin chi tiết</h5>
+            <table class="table table-sm table-borderless" style="max-width: 600px;">
+                <tbody>
+                    <tr>
+                        <td class="text-muted w-25">Mã hàng</td>
+                        <td>@Model.MaSach</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Tên sách</td>
+                        <td>@Model.TenSach</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Tác giả</td>
+                        <td>@Model.TacGia</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Loại sách</td>
+                        <td>
+                            @if (Model.LoaiSach == "Trong Nuoc")
+                            {
+                                <span class="badge bg-success">Sách Trong Nước</span>
+                            }
+                            else if (Model.LoaiSach == "Nuoc Ngoai")
+                            {
+                                <span class="badge bg-primary">Sách Nước Ngoài</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa cập nhật</span>
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h5 class="fw-bold mt-4 mb-3">Mô tả sản phẩm</h5>
+            <div class="text-justify" style="line-height: 1.8;">
+                <p style="white-space: pre-line;">
+                    @Model.MoTa
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

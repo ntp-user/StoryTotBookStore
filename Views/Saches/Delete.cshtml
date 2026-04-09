@@ -1,0 +1,33 @@
+@model BookStoreManagement.Models.Sach
+
+@{
+    ViewData["Title"] = "Xóa sách";
+}
+
+<div class="container mt-4">
+    <h2 class="text-danger">Xóa thông tin sách</h2>
+    <h3>Bạn có chắc chắn muốn xóa cuốn sách này không?</h3>
+    <hr />
+    
+    <div>
+        <dl class="row mt-4">
+            <dt class="col-sm-3">Tên Sách</dt>
+            <dd class="col-sm-9">@Model.TenSach</dd>
+            
+            <dt class="col-sm-3">Tác Giả</dt>
+            <dd class="col-sm-9">@Model.TacGia</dd>
+            
+            <dt class="col-sm-3">Giá (VNĐ)</dt>
+            <dd class="col-sm-9">@Model.GiaBan</dd>
+        </dl>
+        
+        <!-- Form gọi đến action Delete dạng POST để xác nhận xóa -->
+        <form asp-action="Delete" class="mt-4">
+            <!-- BẮT BUỘC: Trường ẩn để truyền Id của sách cần xóa -->
+            <input type="hidden" asp-for="MaSach" />
+            
+            <input type="submit" value="Xác nhận xóa" class="btn btn-danger" />
+            <a asp-action="Index" class="btn btn-secondary ms-2">Hủy bỏ, quay lại</a>
+        </form>
+    </div>
+</div>

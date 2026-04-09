@@ -1,0 +1,280 @@
+@model IEnumerable<BookStoreManagement.Models.SoDiaChi>
+
+@{
+    ViewData["Title"] = "Sổ địa chỉ";
+    
+    // BẠN SỬA LẠI DÒNG NÀY CHO GIỐNG Y HỆT TRANG HỒ SƠ CÁ NHÂN NHÉ
+    Layout = "~/Views/Shared/_AccountLayout.cshtml"; 
+}
+
+<div class="card border-0 shadow-sm rounded-3 h-100 mt-4 mb-5">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">Sổ Địa Chỉ</h4>
+            <button type="button" class="btn btn-danger px-3 py-2" style="background-color: #C92127; border-color: #C92127;" onclick="resetFormThemMoi()" data-bs-toggle="modal" data-bs-target="#modalThemDiaChi">
+                <i class="bi bi-plus-circle me-1"></i> Thêm địa chỉ mới
+            </button>
+        </div>
+        <hr class="mb-4">
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="border rounded p-3 mb-3 position-relative">
+                    @if(item.LaMacDinh) {
+                        <span class="badge bg-success position-absolute top-0 end-0 m-3">Mặc định</span>
+                    }
+                    <h6 class="fw-bold mb-1">@item.Ho @item.Ten <span class="text-muted fw-normal ms-2">| @item.SoDienThoai</span></h6>
+                    <p class="text-muted mb-2">@item.DiaChiCuThe, @item.XaPhuong, @item.QuanHuyen, @item.TinhThanhPho</p>
+                    <div class="mt-2">
+                        <a href="javascript:void(0)" class="text-primary text-decoration-none me-3" 
+                           onclick="moPopUpSua(@item.MaDiaChi, '@item.Ho', '@item.Ten', '@item.SoDienThoai', '@item.TinhThanhPho', '@item.QuanHuyen', '@item.XaPhuong', '@item.DiaChiCuThe', '@item.MaBuuDien', @item.LaMacDinh.ToString().ToLower())"
+                           data-bs-toggle="modal" data-bs-target="#modalThemDiaChi">Chỉnh sửa</a>
+                        
+                        <a href="javascript:void(0);" class="text-danger text-decoration-none" 
+                           onclick="xacNhanXoa(@item.MaDiaChi)">Xóa</a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-map text-muted" style="font-size: 4rem;"></i>
+                <p class="text-muted mt-3">Bạn chưa có địa chỉ lưu nào.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="modalThemDiaChi" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Thêm địa chỉ mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="ThemDiaChi" asp-controller="TaiKhoan" method="post" id="formDiaChi">
+                <div class="modal-body">
+                    <input type="hidden" name="MaDiaChi" id="inputMaDiaChi" value="0" />
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Họ <span class="text-danger">*</span></label>
+                            <input type="text" name="Ho" class="form-control" required placeholder="Họ">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Tên <span class="text-danger">*</span></label>
+                            <input type="text" name="Ten" class="form-control" required placeholder="Tên">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Điện thoại <span class="text-danger">*</span></label>
+                            <input type="text" name="SoDienThoai" class="form-control" required placeholder="Ex: 0972xxxx">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Quốc gia <span class="text-danger">*</span></label>
+                            <select name="QuocGia" class="form-select">
+                                <option value="Việt Nam">Việt Nam</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+                            <select name="TinhThanhPho" id="province" class="form-select" required>
+                                <option value="">Vui lòng chọn</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
+                            <select name="QuanHuyen" id="district" class="form-select" required>
+                                <option value="">Vui lòng chọn</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label class="form-label">Xã/Phường <span class="text-danger">*</span></label>
+                            <select name="XaPhuong" id="ward" class="form-select" required>
+                                <option value="">Vui lòng chọn</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Mã bưu điện</label>
+                            <input type="text" name="MaBuuDien" class="form-control" placeholder="Mã bưu điện VN: 700000">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Địa chỉ <span class="text-danger">*</span></label>
+                        <input type="text" name="DiaChiCuThe" class="form-control" required placeholder="Số nhà, đường...">
+                    </div>
+
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" name="LaMacDinh" value="true" id="checkMacDinh">
+                        <label class="form-check-label text-muted" for="checkMacDinh">
+                            Đặt làm địa chỉ mặc định
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn text-primary border-0" data-bs-dismiss="modal">« Quay lại</button>
+                    <button type="submit" class="btn btn-danger px-4" style="background-color: #C92127;">Lưu địa chỉ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+<script>
+    const host = "https://provinces.open-api.vn/api/";
+    
+    const callAPI = (api) => {
+        return fetch(api).then(response => response.json());
+    }
+
+    // 1. Hàm tải danh sách Tỉnh/Thành
+    function loadProvinces(selectedProvince = "", selectedDistrict = "", selectedWard = "") {
+        callAPI(host + "?depth=1").then(data => {
+            let row = '<option value="">Vui lòng chọn</option>';
+            data.forEach(element => {
+                let isSelected = (element.name === selectedProvince) ? "selected" : "";
+                row += `<option data-code="${element.code}" value="${element.name}" ${isSelected}>${element.name}</option>`;
+            });
+            document.querySelector("#province").innerHTML = row;
+
+            // Tải Tỉnh xong, nếu có tên Tỉnh cũ truyền vào -> Lấy mã code để tải tiếp Huyện
+            if (selectedProvince !== "") {
+                let selectedOption = document.querySelector("#province option:checked");
+                if (selectedOption && selectedOption.getAttribute("data-code")) {
+                    loadDistricts(selectedOption.getAttribute("data-code"), selectedDistrict, selectedWard);
+                }
+            } else {
+                // Nếu là Thêm mới thì dọn dẹp Huyện/Xã
+                document.querySelector("#district").innerHTML = '<option value="">Vui lòng chọn</option>';
+                document.querySelector("#ward").innerHTML = '<option value="">Vui lòng chọn</option>';
+            }
+        });
+    }
+
+    // 2. Hàm tải danh sách Quận/Huyện
+    function loadDistricts(provinceCode, selectedDistrict = "", selectedWard = "") {
+        callAPI(host + "p/" + provinceCode + "?depth=2").then(data => {
+            let row = '<option value="">Vui lòng chọn</option>';
+            data.districts.forEach(element => {
+                let isSelected = (element.name === selectedDistrict) ? "selected" : "";
+                row += `<option data-code="${element.code}" value="${element.name}" ${isSelected}>${element.name}</option>`;
+            });
+            document.querySelector("#district").innerHTML = row;
+            
+            // Tải Huyện xong, nếu có tên Huyện cũ -> Lấy mã code tải tiếp Xã
+            if (selectedDistrict !== "") {
+                let selectedOption = document.querySelector("#district option:checked");
+                if (selectedOption && selectedOption.getAttribute("data-code")) {
+                    loadWards(selectedOption.getAttribute("data-code"), selectedWard);
+                }
+            } else {
+                document.querySelector("#ward").innerHTML = '<option value="">Vui lòng chọn</option>';
+            }
+        });
+    }
+
+    // 3. Hàm tải danh sách Xã/Phường
+    function loadWards(districtCode, selectedWard = "") {
+        callAPI(host + "d/" + districtCode + "?depth=2").then(data => {
+            let row = '<option value="">Vui lòng chọn</option>';
+            data.wards.forEach(element => {
+                let isSelected = (element.name === selectedWard) ? "selected" : "";
+                row += `<option value="${element.name}" ${isSelected}>${element.name}</option>`;
+            });
+            document.querySelector("#ward").innerHTML = row;
+        });
+    }
+
+    // KHỞI TẠO KHI LOAD TRANG
+    document.addEventListener("DOMContentLoaded", function () {
+        // Vừa vào trang thì tải danh sách Tỉnh (không chọn gì cả)
+        loadProvinces();
+
+        // Bắt sự kiện người dùng tự bấm chọn Tỉnh
+        document.querySelector("#province").addEventListener("change", function () {
+            let provinceCode = this.options[this.selectedIndex].getAttribute("data-code");
+            if (provinceCode) {
+                loadDistricts(provinceCode);
+            } else {
+                document.querySelector("#district").innerHTML = '<option value="">Vui lòng chọn</option>';
+                document.querySelector("#ward").innerHTML = '<option value="">Vui lòng chọn</option>';
+            }
+        });
+
+        // Bắt sự kiện người dùng tự bấm chọn Huyện
+        document.querySelector("#district").addEventListener("change", function () {
+            let districtCode = this.options[this.selectedIndex].getAttribute("data-code");
+            if (districtCode) {
+                loadWards(districtCode);
+            } else {
+                document.querySelector("#ward").innerHTML = '<option value="">Vui lòng chọn</option>';
+            }
+        });
+    });
+
+    // HÀM MỞ POPUP SỬA (Lúc này không cần setTimeout rườm rà nữa)
+    function moPopUpSua(ma, ho, ten, sdt, tinh, huyen, xa, diachi, mabuudien, macdinh) {
+        document.querySelector("#modalThemDiaChi .modal-title").innerText = "Chỉnh sửa địa chỉ";
+        document.getElementById("formDiaChi").action = "/TaiKhoan/SuaDiaChi";
+        
+        document.getElementById("inputMaDiaChi").value = ma;
+        document.querySelector("input[name='Ho']").value = ho;
+        document.querySelector("input[name='Ten']").value = ten;
+        document.querySelector("input[name='SoDienThoai']").value = sdt;
+        document.querySelector("input[name='DiaChiCuThe']").value = diachi;
+        document.querySelector("input[name='MaBuuDien']").value = mabuudien;
+        document.querySelector("input[name='LaMacDinh']").checked = macdinh;
+
+        // Truyền cả 3 giá trị cũ vào, hệ thống tự động tải nối tiếp Tỉnh -> Huyện -> Xã chính xác 100%
+        loadProvinces(tinh, huyen, xa);
+    }
+
+    // HÀM MỞ POPUP THÊM MỚI
+    function resetFormThemMoi() {
+        document.querySelector("#modalThemDiaChi .modal-title").innerText = "Thêm địa chỉ mới";
+        document.getElementById("formDiaChi").action = "/TaiKhoan/ThemDiaChi";
+        document.getElementById("inputMaDiaChi").value = "0";
+        document.getElementById("formDiaChi").reset(); 
+        
+        // Trả các ô Select về trạng thái ban đầu
+        loadProvinces();
+    }
+
+    // HÀM XÁC NHẬN XÓA
+    function xacNhanXoa(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Dữ liệu địa chỉ này sẽ bị xóa vĩnh viễn!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#C92127',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Đồng ý, Xóa!',
+            cancelButtonText: 'Hủy bỏ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/TaiKhoan/XoaDiaChi/?id=' + id;
+            }
+        });
+    }
+</script>

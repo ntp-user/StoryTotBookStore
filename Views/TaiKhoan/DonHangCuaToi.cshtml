@@ -1,0 +1,147 @@
+@model IEnumerable<BookStoreManagement.Models.DonHang> 
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<div class="card border-0 shadow-sm rounded-3 h-100 mt-4 mb-5">
+    <div class="card-body p-4">
+        <h4 class="fw-bold mb-4">Đơn Hàng Của Tôi</h4>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var donHang in Model)
+            {
+                <div class="border rounded-3 p-3 mb-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                        <div>
+                            <span class="fw-bold text-dark fs-5">Mã đơn: #@donHang.MaDH</span>
+                            <span class="text-muted ms-2 small">| Đặt lúc: @donHang.NgayDatHang?.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                        
+                        @if (donHang.TrangThai == 0)
+                        {
+                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Chờ duyệt</span>
+                        }
+                        else if (donHang.TrangThai == 1)
+                        {
+                            <span class="badge bg-info text-dark px-3 py-2 rounded-pill">Đã duyệt</span>
+                        }
+                        else if (donHang.TrangThai == 2)
+                        {
+                            <span class="badge bg-danger px-3 py-2 rounded-pill">Đã từ chối</span>
+                        }
+                        else if (donHang.TrangThai == 3)
+                        {
+                            <span class="badge bg-success px-3 py-2 rounded-pill">Đang giao hàng</span>
+                        }
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <p class="mb-1"><i class="bi bi-person me-2 text-muted"></i><strong>Người nhận:</strong> @donHang.TenNguoiNhan</p>
+                            <p class="mb-1"><i class="bi bi-telephone me-2 text-muted"></i><strong>Số điện thoại:</strong> @donHang.SoDienThoai</p>
+                            <p class="mb-1"><i class="bi bi-geo-alt me-2 text-muted"></i><strong>Giao đến:</strong> @donHang.DiaChiGiaoHang</p>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <p class="mb-1 text-muted">Tổng tiền</p>
+                            <h5 class="fw-bold" style="color: #C92127;">@donHang.TongTien?.ToString("N0") ₫</h5>
+                        </div>
+                    </div>
+                    
+                    @if (donHang.ChiTietDonHangs != null && donHang.ChiTietDonHangs.Any())
+                    {
+                        <div class="bg-light p-3 rounded-3 mb-3">
+                            <h6 class="fw-bold mb-3"><i class="bi bi-bag-check me-2"></i>Sản phẩm đã đặt:</h6>
+                            <div class="list-group list-group-flush">
+                                @foreach (var chiTiet in donHang.ChiTietDonHangs)
+                                {
+                                    // SỬA Ở ĐÂY: Dùng thuộc tính liên kết là Object (thường là .Sach), TUYỆT ĐỐI KHÔNG dùng .MaSach
+                                    var sach = chiTiet.Sach; 
+                                    
+                                    <div class="list-group-item px-0 py-2 d-flex justify-content-between align-items-center bg-transparent border-bottom border-light">
+                                        <div class="d-flex align-items-center">
+                                            <img src="@(sach?.HinhAnhUrl ?? "/images/no-image.png")" alt="@sach?.TenSach" class="rounded border bg-white p-1" style="width: 50px; height: 70px; object-fit: cover;" />
+                                            <div class="ms-3">
+                                                <h6 class="mb-1 text-truncate" style="max-width: 250px; font-size: 14px;">@(sach?.TenSach ?? "Sản phẩm không xác định")</h6>
+                                                <small class="text-muted">SL: @chiTiet.SoLuong</small>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="text-danger fw-bold" style="font-size: 14px;">@chiTiet.DonGia.ToString("N0") ₫</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    @if (donHang.TrangThai == 0) 
+                    {
+                        <div class="text-end border-top pt-3">
+                            <button class="btn btn-outline-secondary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#editModal-@donHang.MaDH">
+                                <i class="bi bi-pencil-square me-1"></i> Sửa thông tin liên hệ
+                            </button>
+                        </div>
+
+                        <div class="modal fade" id="editModal-@donHang.MaDH" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content text-start">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title fw-bold">Sửa thông tin nhận hàng (Đơn #@donHang.MaDH)</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form asp-action="CapNhatThongTinDonHang" asp-controller="TaiKhoan" method="post">
+                                        <div class="modal-body">
+                                            <input type="hidden" name="maDonHang" value="@donHang.MaDH" />
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Người nhận</label>
+                                                <input type="text" name="tenNguoiNhan" class="form-control" value="@donHang.TenNguoiNhan" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Số điện thoại</label>
+                                                <input type="tel" name="soDienThoai" class="form-control" value="@donHang.SoDienThoai" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Địa chỉ giao hàng</label>
+                                                <textarea name="diaChi" class="form-control" rows="3" required>@donHang.DiaChiGiaoHang</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                                            <button type="submit" class="btn btn-danger" style="background-color: #C92127;">Lưu thay đổi</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-box-seam fs-1 text-muted mb-3 d-block"></i>
+                <h5 class="text-muted">Bạn chưa có đơn hàng nào.</h5>
+                <a href="/" class="btn btn-danger mt-3" style="background-color: #C92127;">Tiếp tục mua sắm</a>
+            </div>
+        }
+    </div>
+</div>

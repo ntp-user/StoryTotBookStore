@@ -1,0 +1,176 @@
+@model IEnumerable<BookStoreManagement.Models.DonHang>
+@{
+    ViewData["Title"] = "Quản lý Đơn Hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml"; 
+}
+
+<div class="container-fluid mt-4 text-white">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-info fw-bold m-0"><i class="bi bi-receipt-cutoff"></i> QUẢN LÝ ĐƠN HÀNG</h2>
+    </div>
+    
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="table-responsive bg-dark p-3 rounded-4 shadow" style="border: 1px solid #343a40 !important;"> 
+        <table class="table table-dark table-hover table-borderless align-middle mb-0">
+            <thead style="border-bottom: 2px solid #495057;">
+                <tr>
+                    <th>Mã Đơn</th>
+                    <th>Mã Khách Hàng</th>
+                    <th>Khách Hàng</th>
+                    <th>Ngày Đặt</th>
+                    <th class="text-center">Thanh Toán</th> <th>Tổng Tiền</th>
+                    <th class="text-center">Trạng Thái</th>
+                    <th class="text-center">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr style="border-bottom: 1px solid #2b3035;">
+                            <td class="fw-bold text-info">#@item.MaDH</td>
+                            
+                            <td class="text-white fw-bold">KH @item.MaTK</td>
+
+                            <td class="text-white fw-bold">
+                                @item.TenNguoiNhan
+                                <br />
+                                <small class="text-white fw-normal">SĐT: @item.SoDienThoai</small>
+                            </td> 
+                            
+                            <td class="text-white small"><i class="bi bi-clock"></i> @item.NgayDatHang?.ToString("dd/MM/yyyy HH:mm")</td>
+                            
+                            <td class="text-center">
+                                @if (item.PhuongThucThanhToan == "BANKING")
+                                {
+                                    <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">
+                                        <i class="bi bi-qr-code"></i> Chuyển khoản
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary px-3 py-2 rounded-pill shadow-sm">
+                                        <i class="bi bi-cash"></i> Tiền mặt
+                                    </span>
+                                }
+                            </td>
+                            <td class="text-warning fw-bold">@item.TongTien?.ToString("N0") ₫</td>
+                            
+                            <td class="text-center">
+                                @if (item.TrangThai == 0) 
+                                {
+                                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill shadow-sm">
+                                        <i class="bi bi-hourglass-split"></i> Chưa duyệt
+                                    </span>
+                                }
+                                else if (item.TrangThai == 1) 
+                                {
+                                    <span class="badge bg-success px-3 py-2 rounded-pill shadow-sm">
+                                        <i class="bi bi-check2-circle"></i> Đã duyệt
+                                    </span>
+                                }
+                                else if (item.TrangThai == 2)
+                                {
+                                    <span class="badge bg-danger px-2 py-1"><i class="bi bi-x-circle"></i> Đã từ chối</span>
+                                }
+                            </td>
+                            
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a asp-action="Details" asp-route-id="@item.MaDH" class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                        <i class="bi bi-eye"></i> Chi tiết
+                                    </a>
+
+                                    @if (item.TrangThai == 0)
+                                    {
+                                        <form id="form-duyet-@item.MaDH" asp-action="DuyetDonHang" asp-route-id="@item.MaDH" method="post" style="display:inline;">
+                                            <button type="button" class="btn btn-sm btn-success shadow-sm" title="Duyệt đơn hàng này"
+                                                    onclick="xacNhanDuyetDon(@item.MaDH)">
+                                                <i class="bi bi-check-lg"></i> Duyệt đơn
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-sm btn-success shadow-sm disabled" style="opacity: 0.4; cursor: not-allowed;" disabled>
+                                            <i class="bi bi-check-lg"></i> Duyệt đơn
+                                        </button>
+                                    }
+
+                                    <form id="form-xoa-@item.MaDH" asp-action="Delete" asp-route-id="@item.MaDH" method="post" style="display:inline;">
+                                        <button type="button" class="btn btn-sm btn-outline-danger shadow-sm" title="Xóa đơn hàng"
+                                                onclick="xacNhanXoaDonHang(@item.MaDH)">
+                                            <i class="bi bi-trash"></i> Xóa
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-white">
+                            <i class="bi bi-box-seam d-block mb-3" style="font-size: 3rem;"></i>
+                            Chưa có đơn hàng nào trong hệ thống.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Hàm dành cho việc Duyệt Đơn
+    function xacNhanDuyetDon(maDH) {
+        Swal.fire({
+            title: 'Xác nhận duyệt đơn?',
+            text: "Bạn có chắc chắn muốn duyệt đơn hàng #" + maDH + " không?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#198754', 
+            cancelButtonColor: '#dc3545', 
+            confirmButtonText: '<i class="bi bi-check-lg"></i> Đồng ý duyệt',
+            cancelButtonText: 'Hủy bỏ',
+            background: '#212529', 
+            color: '#fff' 
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('form-duyet-' + maDH).submit();
+            }
+        })
+    }
+
+    // Hàm dành cho việc Xóa Đơn Hàng bằng Form
+    function xacNhanXoaDonHang(maDH) {
+        Swal.fire({
+            title: 'CẢNH BÁO XÓA!',
+            html: `Bạn có chắc chắn muốn xóa đơn hàng <strong class="text-warning">#${maDH}</strong> vĩnh viễn không?<br/>Hành động này không thể hoàn tác!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545', 
+            cancelButtonColor: '#6c757d', 
+            confirmButtonText: '<i class="bi bi-trash"></i> Đồng ý xóa',
+            cancelButtonText: 'Hủy bỏ',
+            background: '#212529',
+            color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Tự động submit form xóa khi người dùng nhấn Đồng ý
+                document.getElementById('form-xoa-' + maDH).submit();
+            }
+        })
+    }
+</script>

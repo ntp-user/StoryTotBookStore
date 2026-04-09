@@ -1,0 +1,81 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+:root {
+    --fahasa-red: #C92127;
+    --fahasa-red-hover: #a81c21;
+    --bg-body: #f0f0f0;
+}
+
+body {
+    background-color: var(--bg-body);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+.text-fahasa { color: var(--fahasa-red) !important; }
+.bg-fahasa { background-color: var(--fahasa-red) !important; }
+.btn-fahasa { background-color: var(--fahasa-red); color: white; border: none; }
+.btn-fahasa:hover { background-color: var(--fahasa-red-hover); color: white; }
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    font-size: 0.65rem;
+}
+
+/* --------------------------------------------------- */
+/* CSS XỬ LÝ MENU TỰ XỔ XUỐNG KHI ĐƯA CHUỘT VÀO (HOVER) */
+/* --------------------------------------------------- */
+@media all and (min-width: 992px) {
+    .navbar .nav-item.dropdown:hover .dropdown-menu {
+        display: block; /* Hiển thị menu khi hover */
+        margin-top: 0;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .navbar .nav-item.dropdown:hover .nav-link {
+        color: var(--fahasa-red) !important;
+    }
+}
+
+.dropdown-menu .dropdown-item {
+    padding: 10px 20px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+.dropdown-menu .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: var(--fahasa-red);
+    padding-left: 25px; /* Thụt đầu dòng tạo điểm nhấn */
+}

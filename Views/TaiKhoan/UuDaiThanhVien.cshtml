@@ -1,0 +1,121 @@
+@{
+    ViewData["Title"] = "Ưu đãi thành viên";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml"; 
+
+    // 1. Nhận dữ liệu chính xác từ Controller
+    // Dùng ?? để đảm bảo nếu lỡ ViewBag null thì có giá trị mặc định, tránh lỗi
+    decimal tongTien = ViewBag.TongChiTieu ?? 0m;
+    string hangThanhVien = ViewBag.HangThanhVien ?? "Thành viên Đồng";
+    int giamGia = ViewBag.PhanTramGiam ?? 0;
+    string mauSacHang = ViewBag.MauSac ?? "#b87333"; // Lấy màu sắc động từ Controller
+
+    // 2. Logic tính thanh tiến trình (Progress Bar)
+    decimal mucTieuTiepTheo = 2000000;
+    string hangTiepTheo = "Thành viên Bạc";
+    
+    if (tongTien >= 10000000) {
+        mucTieuTiepTheo = 10000000;
+        hangTiepTheo = "Tối đa";
+    } else if (tongTien >= 5000000) {
+        mucTieuTiepTheo = 10000000;
+        hangTiepTheo = "Thành viên Kim Cương";
+    } else if (tongTien >= 2000000) {
+        mucTieuTiepTheo = 5000000;
+        hangTiepTheo = "Thành viên Vàng";
+    }
+    
+    decimal phanTramTienDo = 0;
+    if (mucTieuTiepTheo > 0) {
+        // Tính tỷ lệ % so với mốc tiếp theo
+        phanTramTienDo = (tongTien / mucTieuTiepTheo) * 100;
+    }
+    if (phanTramTienDo > 100) phanTramTienDo = 100;
+}
+
+<div class="card border-0 shadow-sm rounded-3 h-100 mt-4 mb-5">
+    <div class="card-body p-4">
+        <h4 class="fw-bold mb-1">Ưu Đãi Thành Viên</h4>
+        <p class="text-muted mb-4">Chính sách và quyền lợi dành riêng cho bạn</p>
+        <hr class="mb-4">
+
+        <div class="row mb-5">
+            <div class="col-md-6 mb-3 mb-md-0">
+                @* Dùng màu nền nhạt tùy biến dựa trên màu sắc hạng *@
+                <div class="p-3 border rounded-3 h-100 shadow-sm" style="background-color: #fcfcfc; border-color: @mauSacHang !important;">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-trophy-fill fs-3 me-3" style="color: @mauSacHang;"></i>
+                        <div>
+                            <p class="mb-0 text-muted small">Hạng hiện tại của bạn</p>
+                            <h5 class="fw-bold mb-0" style="color: @mauSacHang;">@hangThanhVien</h5>
+                        </div>
+                    </div>
+                    <div class="mt-3 bg-white p-2 rounded text-center border">
+                        <span class="text-dark">Đặc quyền: </span>
+                        <strong style="color: #C92127;">Giảm ngay @giamGia%</strong>
+                        <span class="text-dark"> cho mọi đơn hàng!</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="p-3 border rounded-3 h-100 d-flex flex-column justify-content-center shadow-sm">
+                    <p class="mb-1 text-muted small">Tổng chi tiêu tích lũy</p>
+                    <h4 class="fw-bold text-dark">@tongTien.ToString("N0") ₫</h4>
+                    
+                    @if(hangTiepTheo != "Tối đa")
+                    {
+                        <p class="small text-muted mb-2 mt-2">Cần mua thêm <strong>@((mucTieuTiepTheo - tongTien).ToString("N0")) ₫</strong> để thăng hạng <strong style="color: #C92127;">@hangTiepTheo</strong></p>
+                        <div class="progress" style="height: 12px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: @phanTramTienDo%; background-color: #C92127 !important;" aria-valuenow="@phanTramTienDo" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="small text-success mb-2 mt-2 fw-bold">
+                            <i class="bi bi-star-fill text-warning"></i> Chúc mừng bạn đã đạt mức hạng cao nhất!
+                        </p>
+                        <div class="progress" style="height: 12px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <h6 class="fw-bold mb-3"><i class="bi bi-info-circle me-2"></i>Chi tiết quy định hạng thành viên</h6>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-center align-middle shadow-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th class="py-3">Hạng Thành Viên</th>
+                        <th class="py-3">Mức Chi Tiêu Tích Lũy</th>
+                        <th class="py-3">Quyền Lợi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="@(hangThanhVien == "Thành viên Đồng" ? "table-active" : "")">
+                        <td class="fw-semibold" style="color: #b87333;">Thành viên Đồng</td>
+                        <td>Dưới 2.000.000 ₫</td>
+                        <td>Không có</td>
+                    </tr>
+                    <tr class="@(hangThanhVien == "Thành viên Bạc" ? "table-active" : "")">
+                        <td class="fw-semibold text-secondary">Thành viên Bạc</td>
+                        <td>Từ 2.000.000 ₫</td>
+                        <td><span class="badge bg-secondary">Giảm 5%</span></td>
+                    </tr>
+                    <tr class="@(hangThanhVien == "Thành viên Vàng" ? "table-active" : "")">
+                        <td class="fw-semibold text-warning">Thành viên Vàng</td>
+                        <td>Từ 5.000.000 ₫</td>
+                        <td><span class="badge bg-warning text-dark">Giảm 10%</span></td>
+                    </tr>
+                    <tr class="@(hangThanhVien == "Thành viên Kim Cương" ? "table-active" : "")">
+                        <td class="fw-bold" style="color: #00bfff;">Thành viên Kim Cương</td>
+                        <td>Từ 10.000.000 ₫</td>
+                        <td><span class="badge rounded-pill text-white" style="background-color: #00bfff;">Giảm 15%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</div>

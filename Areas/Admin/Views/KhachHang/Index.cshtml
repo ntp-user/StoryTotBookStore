@@ -1,0 +1,125 @@
+@model IEnumerable<BookStoreManagement.Models.TaiKhoan>
+@{
+    ViewData["Title"] = "Quản lý khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* Giới hạn text cột địa chỉ chỉ hiện tối đa 2 dòng cho đỡ vỡ bảng */
+    .dia-chi-ngan {
+        max-width: 250px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #adb5bd; /* Màu xám nhạt cho text */
+    }
+</style>
+
+<div class="container-fluid mt-4 text-white"> 
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-info fw-bold m-0"><i class="bi bi-people"></i> QUẢN LÝ KHÁCH HÀNG</h2>
+    </div>
+    
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    <div class="table-responsive bg-dark p-3 rounded-4 shadow"> 
+        <table class="table table-dark table-hover table-borderless align-middle mb-0">
+            <thead style="border-bottom: 2px solid #495057;">
+                <tr>
+                    <th style="width: 12%;">Tài khoản</th>
+                    <th style="width: 18%;">Họ và tên</th>
+                    <th style="width: 12%;">Số điện thoại</th>
+                    <th style="width: 18%;">Email</th>
+                    <th style="width: 20%;">Địa chỉ</th>
+                    <th style="width: 12%;">Ngày tạo</th> 
+                    <th class="text-center" style="width: 8%;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr style="border-bottom: 1px solid #2b3035;">
+                            <td class="fw-bold text-info">@item.Username</td>
+                            <td class="fw-bold text-white">@item.HoTen</td> 
+                            <td class="text-light">@item.SoDienThoai</td>
+                            <td class="text-light">@item.Email</td>
+                            
+                            <td><div class="dia-chi-ngan" title="@item.DiaChi">@item.DiaChi</div></td>
+                            
+                            <td>
+                                @if(item.NgayTao != null)
+                                {
+                                    <span class="text-white" style="font-size: 0.9em;"><i class="bi bi-clock"></i> @item.NgayTao?.ToString("dd/MM/yyyy HH:mm")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-white fst-italic" style="font-size: 0.9em;">Chưa cập nhật</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa"
+                                            onclick="xacNhanXoaKhachHang(this, '@item.Username')">
+                                        <i class="bi bi-trash"></i> Xóa
+                                        <a href="@Url.Action("Delete", new { id = item.MaTK })" style="display:none;" class="link-xoa"></a>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-people d-block mb-3" style="font-size: 3rem;"></i>
+                            Chưa có khách hàng nào trong hệ thống.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function xacNhanXoaKhachHang(buttonElement, username) {
+        Swal.fire({
+            title: 'CẢNH BÁO XÓA!',
+            html: `Bạn có chắc chắn muốn xóa tài khoản <strong class="text-info">[ ${username} ]</strong> vĩnh viễn không?<br/>Hành động này không thể hoàn tác!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545', // Màu đỏ nguy hiểm
+            cancelButtonColor: '#6c757d', // Màu xám cho nút Hủy
+            confirmButtonText: '<i class="bi bi-trash"></i> Đồng ý xóa',
+            cancelButtonText: 'Hủy bỏ',
+            background: '#212529',
+            color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Nếu người dùng đồng ý, tìm thẻ <a> ẩn bên trong nút vừa bấm và kích hoạt nó
+                var linkXoa = buttonElement.querySelector('.link-xoa').href;
+                window.location.href = linkXoa;
+            }
+        })
+    }
+</script>

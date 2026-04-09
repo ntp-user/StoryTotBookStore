@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        /* Tông màu Dark Theme */
+        :root {
+            --bg-main: #141b2d;
+            --bg-sidebar: #1F2A40;
+            --text-main: #e0e0e0;
+            --text-muted: #868dfb;
+            --accent: #4cceac;
+        }
+        
+        body { 
+            background-color: var(--bg-main); 
+            color: var(--text-main); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Tránh cuộn toàn trang, chỉ cuộn nội dung */
+        }
+
+        /* --- VÙNG SIDEBAR --- */
+        #sidebar { 
+            width: 250px; 
+            height: 100vh; 
+            background-color: var(--bg-sidebar); 
+            border-right: 1px solid rgba(255,255,255,0.05);
+            overflow-y: auto;
+            transition: margin 0.3s ease; /* Hiệu ứng trượt mượt mà */
+            z-index: 1000;
+        }
+        
+        /* Class dùng để ẩn sidebar khi bấm nút (trên PC) */
+        #sidebar.collapsed {
+            margin-left: -250px;
+        }
+
+        .sidebar-link { color: var(--text-main); text-decoration: none; padding: 12px 20px; display: block; transition: 0.2s; }
+        .sidebar-link:hover { color: var(--accent); background-color: rgba(255,255,255,0.05); }
+        .sidebar-link i { margin-right: 15px; color: var(--text-muted); font-size: 1.1rem; }
+        .sidebar-link:hover i { color: var(--accent); }
+        .sidebar-title { font-size: 0.75rem; color: #a3a3a3; padding: 15px 20px 5px; text-transform: uppercase; font-weight: bold; }
+        
+        /* --- VÙNG NỘI DUNG CHÍNH --- */
+        #main-content { 
+            flex: 1; 
+            height: 100vh; 
+            overflow-y: auto; 
+            padding: 20px; 
+            transition: all 0.3s ease;
+        }
+
+        /* --- THANH TOPBAR & NÚT 3 GẠCH --- */
+        .admin-header {
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1); /* Đường kẻ mờ ngăn cách header */
+        }
+        #sidebarToggle {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        #sidebarToggle:hover { color: var(--accent); }
+
+       /* --- XỬ LÝ RESPONSIVE (MÀN HÌNH NHỎ) --- */
+        @@media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                margin-left: -250px; /* Mặc định ẩn trên điện thoại */
+                box-shadow: 5px 0 15px rgba(0,0,0,0.5); /* Tạo bóng đổ khi trượt ra */
+            }
+            #sidebar.show-mobile {
+                margin-left: 0; /* Hiện ra khi bấm nút trên mobile */
+            }
+        }
+    </style>
+</head>
+
+<body class="d-flex w-100 vh-100">
+    
+    <div id="sidebar" class="flex-shrink-0">
+        <div class="text-center py-4">
+            <img src="/images/ntp.jpg" class="rounded-circle mb-2" width="70" alt="Admin Avatar">
+            <h5 class="mb-0 fw-bold">ADMIN STORY TOT</h5>
+            <small style="color: var(--accent);">VP Fancy Admin</small>
+        </div>
+        
+        <div class="sidebar-title">Dashboard</div>
+        <a href="/Admin/Home/Index" class="sidebar-link"><i class="bi bi-house-door-fill"></i> Trang chủ Admin</a>
+        
+        <div class="sidebar-title">Quản lý dữ liệu</div>
+        <a href="/Admin/BookManagement/Index" class="sidebar-link"><i class="bi bi-book-fill"></i> Quản lý Sách</a>
+        
+        <a href="/Admin/KhachHang/Index" class="sidebar-link"><i class="bi bi-people-fill"></i> Quản lý Khách hàng</a>
+        <a href="/Admin/DonHang/Index" class="sidebar-link"><i class="bi bi-receipt"></i> Hóa đơn & Đơn hàng</a>
+        
+        <div class="sidebar-title">Hệ thống</div>
+        <a href="/Saches" class="sidebar-link"><i class="bi bi-globe"></i> Xem Website (Khách)</a>
+        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+            <button type="submit" class="sidebar-link w-100 text-start border-0 bg-transparent">
+                <i class="bi bi-box-arrow-right text-danger"></i> Đăng xuất
+            </button>
+        </form>
+    </div>
+
+    <div id="main-content">
+        
+        <div class="d-flex justify-content-between align-items-center admin-header">
+            <button id="sidebarToggle" title="Đóng/Mở Menu">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="text-end">
+                <h6 class="mb-0 text-white">Xin chào, Admin!</h6>
+            </div>
+        </div>
+
+        <div class="container-fluid p-0">
+            @RenderBody()
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function () {
+            var sidebar = document.getElementById('sidebar');
+            // Kiểm tra kích thước màn hình để áp dụng hiệu ứng phù hợp
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('show-mobile'); // Trượt ra/vào trên Mobile
+            } else {
+                sidebar.classList.toggle('collapsed'); // Thu gọn trên PC
+            }
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

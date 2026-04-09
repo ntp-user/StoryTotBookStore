@@ -1,0 +1,186 @@
+@model List<BookStoreManagement.Models.CartItem>
+@{
+    ViewData["Title"] = "Thanh toán đơn hàng";
+}
+
+<div class="container mt-5 mb-5">
+    <h3 class="text-danger mb-4 fw-bold"><i class="bi bi-credit-card"></i> XÁC NHẬN THANH TOÁN</h3>
+    
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4 fw-bold">Thông tin giao hàng</h5>
+                    
+                    <form asp-controller="Saches" asp-action="CompleteCheckout" method="post">
+                        <input type="hidden" name="tongTienTruyVien" value="@ViewBag.TongCong" />
+
+                        @if (ViewBag.DanhSachDiaChi != null && ViewBag.DanhSachDiaChi.Count > 0)
+                        {
+                            <div class="mb-4 p-3 border rounded bg-light">
+                                <h6 class="font-weight-bold mb-3">Chọn địa chỉ nhận hàng:</h6>
+                                
+                                @foreach (var dc in ViewBag.DanhSachDiaChi)
+                                {
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="MaDiaChiDuocChon" id="diachi_@dc.MaDiaChi" value="@dc.MaDiaChi" onchange="toggleNewAddress()" @(dc.LaMacDinh ? "checked" : "")>
+                                        <label class="form-check-label" style="cursor: pointer;" for="diachi_@dc.MaDiaChi">
+                                            <strong>@dc.Ho @dc.Ten</strong> | @dc.SoDienThoai <br>
+                                            <span class="text-muted">@dc.DiaChiCuThe, @dc.XaPhuong, @dc.QuanHuyen, @dc.TinhThanhPho</span>
+                                            @if(dc.LaMacDinh) 
+                                            { 
+                                                <span class="badge bg-success ms-2">Mặc định</span> 
+                                            }
+                                        </label>
+                                    </div>
+                                }
+
+                                <div class="form-check mt-3 border-top pt-2">
+                                    <input class="form-check-input" type="radio" name="MaDiaChiDuocChon" id="diachi_0" value="0" onchange="toggleNewAddress()">
+                                    <label class="form-check-label text-primary" style="cursor: pointer;" for="diachi_0">
+                                        + Giao đến địa chỉ khác (Nhập bên dưới)
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <input type="hidden" name="MaDiaChiDuocChon" value="0" id="diachi_0" checked>
+                        }
+
+                        <div id="form-dia-chi-moi" style="display: @(ViewBag.DanhSachDiaChi != null && ViewBag.DanhSachDiaChi.Count > 0 ? "none" : "block");">
+                            <h6 class="fw-bold mb-3 text-secondary">Nhập địa chỉ mới:</h6>
+                            <div>
+                                <div class="mb-3">
+                                    <label>Họ và tên người nhận</label>
+                                    <input type="text" class="form-control address-input" name="hoTen" placeholder="Nhập họ tên đầy đủ">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label>Số điện thoại *</label>
+                                    <input type="text" class="form-control address-input" name="soDienThoai" placeholder="Ví dụ: 0912345678">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label>Địa chỉ nhận hàng</label>
+                                    <textarea class="form-control address-input" name="diaChi" rows="3" placeholder="Nhập địa chỉ chi tiết..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        <h5 class="card-title mb-3 fw-bold">Phương thức thanh toán</h5>
+                        
+                        <div class="form-check mb-3 border p-3 rounded shadow-sm" style="cursor: pointer;">
+                            <input class="form-check-input mt-2" type="radio" name="PhuongThucThanhToan" id="paymentCOD" value="COD" checked>
+                            <label class="form-check-label w-100 ms-2" for="paymentCOD" style="cursor: pointer;">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-cash-coin fs-4 text-success me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">Thanh toán bằng tiền mặt khi nhận hàng (COD)</div>
+                                        <small class="text-muted">Bạn sẽ thanh toán khi nhân viên giao hàng tới.</small>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-4 border p-3 rounded shadow-sm" style="cursor: pointer;">
+                            <input class="form-check-input mt-2" type="radio" name="PhuongThucThanhToan" id="paymentBanking" value="BANKING">
+                            <label class="form-check-label w-100 ms-2" for="paymentBanking" style="cursor: pointer;">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-qr-code-scan fs-4 text-primary me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">Chuyển khoản qua mã QR (VietQR / Momo)</div>
+                                        <small class="text-muted">Hệ thống sẽ tạo mã QR tự động theo số tiền đơn hàng.</small>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger w-100 fw-bold py-3 mt-2 shadow-sm" style="font-size: 16px; background-color: #C92127; border: none; border-radius: 8px;">
+                            HOÀN TẤT ĐẶT HÀNG
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5 mt-4 mt-md-0">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4 fw-bold">Tóm tắt đơn hàng (@Model.Count sản phẩm)</h5>
+                    
+                    <div style="max-height: 300px; overflow-y: auto; overflow-x: hidden;">
+                        @foreach (var item in Model)
+                        {
+                            <div class="row mb-3 align-items-center">
+                                <div class="col-3">
+                                    <img src="@item.HinhAnhDaiDien" class="img-fluid rounded border p-1" alt="@item.TenSach" />
+                                </div>
+                                <div class="col-9">
+                                    <h6 class="mb-1 text-truncate" style="font-size: 14px;">@item.TenSach</h6>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <small class="text-muted">SL: @item.SoLuong</small>
+                                        <span class="text-danger fw-bold">@item.ThanhTien.ToString("N0") đ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <hr />
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tạm tính:</span>
+                        <span class="fw-bold">@(ViewBag.TamTinh != null ? ViewBag.TamTinh.ToString("N0") : "0") đ</span>
+                    </div>
+
+                    @if (ViewBag.SoTienGiam != null && ViewBag.SoTienGiam > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-2 text-primary">
+                            <span>Ưu đãi hạng @ViewBag.TenHang (-@ViewBag.PhanTramGiam%):</span>
+                            <span>- @ViewBag.SoTienGiam.ToString("N0") đ</span>
+                        </div>
+                    }
+
+                    @if (ViewBag.KhuyenMaiDon != null && ViewBag.KhuyenMaiDon > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-2 text-success">
+                            <span>Khuyến mãi đơn từ 150k:</span>
+                            <span>- @ViewBag.KhuyenMaiDon.ToString("N0") đ</span>
+                        </div>
+                    }
+
+                    <hr />
+                    <div class="d-flex justify-content-between fs-5 text-danger fw-bold">
+                        <span>Tổng cộng:</span>
+                        <span>@(ViewBag.TongCong != null ? ViewBag.TongCong.ToString("N0") : "0") đ</span>
+                    </div>
+
+                    <a href="/Cart" class="d-block text-center mt-4 text-decoration-none text-muted">
+                        <i class="bi bi-arrow-left"></i> Quay lại giỏ hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleNewAddress() {
+        // Lấy nút radio có ID là diachi_0 (nút Giao đến địa chỉ khác)
+        var radioKhac = document.getElementById('diachi_0');
+        var formMoi = document.getElementById('form-dia-chi-moi');
+        var inputs = document.querySelectorAll('.address-input');
+        
+        // Kiểm tra xem nút có tồn tại và đang được chọn hay không
+        if (radioKhac && radioKhac.checked) {
+            formMoi.style.display = 'block';
+            inputs.forEach(i => i.setAttribute('required', 'required'));
+        } else {
+            formMoi.style.display = 'none';
+            inputs.forEach(i => i.removeAttribute('required'));
+        }
+    }
+    // Chạy thử 1 lần khi load trang
+    document.addEventListener("DOMContentLoaded", toggleNewAddress);
+</script>

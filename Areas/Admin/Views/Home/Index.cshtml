@@ -1,0 +1,143 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1 text-info" style="letter-spacing: 1px;"><i class="bi bi-speedometer2"></i> DASHBOARD</h2>
+        <p class="text-white-50">Thống kê tổng quan hệ thống cửa hàng</p>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="p-4 rounded-4 shadow" style="background-color: #1f2937; border: 1px solid #374151;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-currency-dollar mb-2 text-warning" style="font-size: 1.8rem;"></i>
+                    <h4 class="fw-bold mb-0 text-white">@String.Format("{0:N0}", ViewBag.DoanhThu ?? 0) ₫</h4>
+                    <small class="text-white-50">Tổng Doanh Thu</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="p-4 rounded-4 shadow" style="background-color: #1f2937; border: 1px solid #374151;">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <i class="bi bi-receipt-cutoff mb-2 text-info" style="font-size: 1.8rem;"></i>
+                    <h4 class="fw-bold mb-0 text-white">@((ViewBag.DonChuaDuyet ?? 0) + (ViewBag.DonDaDuyet ?? 0) + (ViewBag.DonTuChoi ?? 0)) Đơn</h4>
+                    <small class="text-white-50">Tổng số đơn hàng</small>
+                </div>
+                <div class="text-end" style="font-size: 0.85rem;">
+                    <div class="text-warning">@(ViewBag.DonChuaDuyet ?? 0) Chờ duyệt</div>
+                    <div class="text-success">@(ViewBag.DonDaDuyet ?? 0) Đã duyệt</div>
+                    <div class="text-danger">@(ViewBag.DonTuChoi ?? 0) Từ chối</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="p-4 rounded-4 shadow" style="background-color: #1f2937; border: 1px solid #374151;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-people-fill mb-2 text-success" style="font-size: 1.8rem;"></i>
+                    <h4 class="fw-bold mb-0 text-white">@(ViewBag.TongKhachHang ?? 0)</h4>
+                    <small class="text-white-50">Khách hàng đăng ký</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="p-4 rounded-4 shadow" style="background-color: #1f2937; border: 1px solid #374151;">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <i class="bi bi-book-half mb-2" style="color: #6870fa; font-size: 1.8rem;"></i>
+                    <h4 class="fw-bold mb-0 text-white">@((ViewBag.SachTrongNuoc ?? 0) + (ViewBag.SachNuocNgoai ?? 0)) Cuốn</h4>
+                    <small class="text-white-50">Tổng sản phẩm</small>
+                </div>
+                <div class="text-end" style="font-size: 0.85rem;">
+                    <div class="text-info">@(ViewBag.SachTrongNuoc ?? 0) Trong nước</div>
+                    <div class="text-primary">@(ViewBag.SachNuocNgoai ?? 0) Nước ngoài</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="p-4 rounded-4 shadow" style="background-color: #1f2937; border: 1px solid #374151;">
+            <h5 class="text-white mb-4 fw-bold">Biểu đồ Tổng quan</h5>
+            <div style="height: 400px; width: 100%;">
+                <canvas id="myDashboardChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById('myDashboardChart').getContext('2d');
+        
+        // Lấy dữ liệu từ ViewBag của C# ném xuống biến của Javascript (có bảo vệ null)
+        const donDaDuyet = @(ViewBag.DonDaDuyet ?? 0);
+        const donChuaDuyet = @(ViewBag.DonChuaDuyet ?? 0);
+        const donTuChoi = @(ViewBag.DonTuChoi ?? 0);
+
+        const sachTrongNuoc = @(ViewBag.SachTrongNuoc ?? 0);
+        const sachNuocNgoai = @(ViewBag.SachNuocNgoai ?? 0);
+        // Vẽ biểu đồ cột (Bar Chart)
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Đơn Đã Duyệt', 'Đơn Chờ', 'Đơn Hủy', 'Sách Trong Nước', 'Sách Ngoại'],
+                datasets: [{
+                    label: 'Số lượng',
+                    data: [donDaDuyet, donChuaDuyet, donTuChoi, sachTrongNuoc, sachNuocNgoai],
+                    backgroundColor: [
+                        'rgba(25, 135, 84, 0.7)',  // Xanh lá (Đã duyệt)
+                        'rgba(255, 193, 7, 0.7)',  // Vàng (Chờ)
+                        'rgba(220, 53, 69, 0.7)',  // Đỏ (Hủy)
+                        'rgba(13, 202, 240, 0.7)', // Xanh lơ (Sách TN)
+                        'rgba(104, 112, 250, 0.7)' // Tím (Sách NN)
+                    ],
+                    borderColor: [
+                        'rgb(25, 135, 84)',
+                        'rgb(255, 193, 7)',
+                        'rgb(220, 53, 69)',
+                        'rgb(13, 202, 240)',
+                        'rgb(104, 112, 250)'
+                    ],
+                    borderWidth: 1,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: 'white' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: 'rgba(255, 255, 255, 0.7)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: 'rgba(255, 255, 255, 0.7)' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    });
+</script>

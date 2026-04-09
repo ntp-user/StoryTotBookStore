@@ -1,0 +1,102 @@
+@model BookStoreManagement.Models.TaiKhoan
+@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 p-4">
+                <h3 class="text-center text-danger fw-bold mb-4">ĐĂNG KÝ TÀI KHOẢN</h3>
+                
+                @if (ViewBag.Loi != null)
+                {
+                    <div class="alert alert-danger text-center">@ViewBag.Loi</div>
+                }
+
+                <form asp-action="Register" method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Họ và tên</label>
+                            <input asp-for="HoTen" class="form-control" placeholder="Nhập họ tên..." />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Số điện thoại <span class="text-danger">*</span></label>
+                            <input asp-for="SoDienThoai" class="form-control" placeholder="Nhập SĐT..." />
+                            <span asp-validation-for="SoDienThoai" class="text-danger" style="font-size: 0.85em;"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                        <input asp-for="Email" class="form-control" placeholder="Nhập email..." />
+                        <span asp-validation-for="Email" class="text-danger" style="font-size: 0.85em;"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên đăng nhập <span class="text-danger">*</span></label>
+                        <input asp-for="Username" class="form-control" placeholder="Tạo tên đăng nhập..." />
+                        <span asp-validation-for="Username" class="text-danger" style="font-size: 0.85em;"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mật khẩu <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input asp-for="Password" type="password" id="mkInput" class="form-control" placeholder="Tạo mật khẩu..." />
+                            <button class="btn btn-outline-secondary" type="button" id="btnHienMK">
+                                <i class="bi bi-eye-slash" id="iconMK"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger" style="font-size: 0.85em;"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nhập lại mật khẩu <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="password" name="XacNhanMatKhau" id="xacNhanMkInput" class="form-control" placeholder="Nhập lại mật khẩu..." required />
+                            <button class="btn btn-outline-secondary" type="button" id="btnHienXacNhanMK">
+                                <i class="bi bi-eye-slash" id="iconXacNhanMK"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger w-100 fw-bold mt-2 py-2" style="background-color: #C92127;">ĐĂNG KÝ</button>
+                    
+                    <div class="text-center mt-3">
+                        <span>Đã có tài khoản? </span>
+                        <a asp-action="Login" class="text-danger text-decoration-none fw-bold">Đăng nhập</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // JS Xử lý con mắt hiện/ẩn mật khẩu (Giữ nguyên của bạn vì code rất xịn)
+        document.getElementById('btnHienMK').addEventListener('click', function() {
+            var input = document.getElementById('mkInput');
+            var icon = document.getElementById('iconMK');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("bi-eye-slash", "bi-eye");
+            } else {
+                input.type = "password";
+                icon.classList.replace("bi-eye", "bi-eye-slash");
+            }
+        });
+
+        document.getElementById('btnHienXacNhanMK').addEventListener('click', function() {
+            var input = document.getElementById('xacNhanMkInput');
+            var icon = document.getElementById('iconXacNhanMK');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("bi-eye-slash", "bi-eye");
+            } else {
+                input.type = "password";
+                icon.classList.replace("bi-eye", "bi-eye-slash");
+            }
+        });
+    </script>
+}

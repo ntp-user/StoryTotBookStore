@@ -1,0 +1,91 @@
+@model BookStoreManagement.Models.TaiKhoan 
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml"; // <--- Gọi cái khung có menu bên trái ra
+}
+
+<h5 class="fw-bold mb-4">Hồ sơ cá nhân</h5>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<form asp-action="HoSoCaNhan" asp-controller="TaiKhoan" method="post">
+    <input type="hidden" asp-for="MaTK" />
+
+    <div class="row mb-3 align-items-center">
+        <label class="col-sm-3 col-form-label text-md-end text-muted">Họ và Tên</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" asp-for="HoTen" placeholder="Nhập họ và tên">
+        </div>
+    </div>
+
+    <div class="mb-3 row align-items-center">
+        <label asp-for="SoDienThoai" class="col-sm-3 col-form-label text-sm-end text-muted">Số điện thoại</label>
+        <div class="col-sm-9 d-flex">
+            <input type="text" asp-for="SoDienThoai" name="SoDienThoai" id="inputSDT" class="form-control me-2" placeholder="Nhập số điện thoại" readonly>
+            
+            <button type="button" id="btnThayDoi" class="btn btn-outline-secondary text-nowrap" onclick="moKhoaSDT()">Thay đổi</button>
+        </div>
+    </div>
+
+    <div class="row mb-3 align-items-center">
+        <label class="col-sm-3 col-form-label text-md-end text-muted">Email</label>
+        <div class="col-sm-9">
+            <input type="email" class="form-control" asp-for="Email" placeholder="Chưa có email">
+        </div>
+    </div>
+
+    <div class="row mb-4 align-items-center">
+        <label class="col-sm-3 text-md-end text-muted">Giới tính</label>
+        <div class="col-sm-9">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" asp-for="GioiTinh" value="Nam" id="Nam">
+                <label class="form-check-label" for="Nam">Nam</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" asp-for="GioiTinh" value="Nữ" id="Nu">
+                <label class="form-check-label" for="Nu">Nữ</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-9 offset-sm-3">
+            <button type="submit" class="btn text-white px-4" style="background-color: var(--fahasa-red, #c92127); border-radius: 8px;">
+                Lưu thay đổi
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    function moKhoaSDT() {
+        var inputSdt = document.getElementById("inputSDT");
+        var btn = document.getElementById("btnThayDoi");
+
+        // 1. Xóa thuộc tính readonly để cho phép nhập liệu
+        inputSdt.removeAttribute("readonly");
+        
+        // 2. Đưa con trỏ chuột vào sẵn ô đó luôn cho tiện
+        inputSdt.focus();
+        
+        // 3. Đổi màu viền để khách hàng biết là đang sửa được
+        inputSdt.style.borderColor = "#C92127"; 
+        
+        // 4. Đổi chữ của nút thành "Đang sửa..."
+        btn.innerText = "Đang sửa";
+        btn.disabled = true; // Bấm 1 lần thôi
+    }
+</script>
