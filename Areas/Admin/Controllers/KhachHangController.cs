@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookStoreManagement.Models;
-using BookStoreManagement.Data; // Đổi tên project cho khớp
+using BookStoreManagement.Data; 
 
 namespace BookStoreManagement.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class KhachHangController : Controller
     {
-        private readonly ApplicationDbContext _context; // Tên DbContext của bạn
+        private readonly ApplicationDbContext _context; 
 
         public KhachHangController(ApplicationDbContext context)
         {
