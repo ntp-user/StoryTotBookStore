@@ -1,21 +1,18 @@
 using BookStoreManagement.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq; // Thêm thư viện này để dùng các hàm Count, Where, Sum...
-// using TenProjectCuaBan.Models; // <-- Bỏ comment dòng này và sửa tên để gọi được Models (nếu cần)
+using System.Linq; 
 
-namespace TenProjectCuaBan.Areas.Admin.Controllers // Nhớ đổi tên Namespace cho đúng project của bạn
+namespace TenProjectCuaBan.Areas.Admin.Controllers 
 {
     [Area("Admin")] 
     [Authorize(Roles = "Admin")] 
     public class HomeController : Controller
     {
         // 1. Khai báo biến _context
-        // ⚠️ THAY "TenDbContextCuaBan" bằng tên Context thật của project bạn (VD: BookStoreDbContext)
         private readonly ApplicationDbContext _context;
 
         // 2. Tạo Constructor để tiêm (inject) _context vào Controller
-        // ⚠️ THAY "ApplicationDbContext." ở dòng dưới luôn nhé
         public HomeController(ApplicationDbContext context)
         {
             _context = context;
