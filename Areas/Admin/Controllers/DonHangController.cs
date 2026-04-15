@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BookStoreManagement.Models; // Đảm bảo đúng namespace Models của bạn
+using BookStoreManagement.Models; 
 using System.Linq;
 using System.Threading.Tasks;
 using BookStoreManagement.Data;
@@ -10,8 +10,6 @@ namespace BookStoreManagement.Areas.Admin.Controllers
     [Area("Admin")] // Khai báo Controller này thuộc khu vực Admin
     public class DonHangController : Controller
     {
-        // Thay "ApplicationDbContext" bằng tên class DbContext thực tế của bạn 
-        // (ví dụ: BookStoreContext, AppDbContext...)
         private readonly ApplicationDbContext _context;
 
         // Constructor để tiêm (inject) Database Context vào Controller
