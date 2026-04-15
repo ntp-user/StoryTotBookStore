@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization; // Thêm thư viện phân quyền
+using Microsoft.AspNetCore.Authorization;
 using BookStoreManagement.Data;
 using BookStoreManagement.Models;
 using Microsoft.EntityFrameworkCore;
@@ -8,16 +8,15 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO; 
 using System;
 
-namespace BookStoreManagement.Areas.Admin.Controllers // Đã sửa đúng chuẩn Admin
+namespace BookStoreManagement.Areas.Admin.Controllers 
 {
     [Area("Admin")] // Bảo vệ khu vực
     [Authorize(Roles = "Admin")] // Chặn không cho khách vào
-    public class BookManagementController : Controller // Đã sửa tên Class
+    public class BookManagementController : Controller 
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        // Đã sửa tên Constructor
         public BookManagementController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
@@ -90,7 +89,7 @@ namespace BookStoreManagement.Areas.Admin.Controllers // Đã sửa đúng chu�
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // Thêm tham số IFormFile fileTaiLen vào cuối ngoặc
+        //tham số IFormFile fileTaiLen
         public async Task<IActionResult> Edit(int id, [Bind("MaSach,TenSach,TacGia,GiaBan,HinhAnhUrl,SoLuongDaBan,MoTa,LoaiSach")] Sach sach, IFormFile? fileTaiLen)
         {
             if (id != sach.MaSach)
